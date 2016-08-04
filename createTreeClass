@@ -1,0 +1,95 @@
+<?php
+
+/*
+ * @author Eli Meiler
+ * @Date 2012-12-16
+ *
+ * Create a tree of the classes files
+ *
+ */
+
+
+class TreeClass {
+
+    protected $classFiles = array();
+
+    public function find_class_file($dir = '/')
+    {
+
+        if ($handle = opendir($_SERVER['DOCUMENT_ROOT']."/libraries/php/" . $dir))
+        {
+            while (false !== ($file = readdir($handle)))
+            {
+                if ($file != "." && $file != "..")
+                {
+                    if (is_file($_SERVER['DOCUMENT_ROOT']."/libraries/php/" . $dir . '/' . $file) && strpos($file, ".php") )
+                    {
+                        $directory = $dir . "/" . $file;
+                        $directory = explode("/", $directory);
+                        unset($directory[count($directory)-1]);
+                        unset($directory[0]);
+                        $directory = implode("/", $directory);
+
+                        if (empty($directory)) {
+                            $directory = "/";
+                        }
+                        else {
+                            $directory = $directory . "/";
+                        }
+
+                        // if (strpos($file, ".class.php")) {
+                        $this->classFiles[] = "'".str_replace(".php", "", $file)."'" . " => " . "'".$directory."'";
+                        // }
+                    }
+
+                    if (is_dir($_SERVER['DOCUMENT_ROOT']."/libraries/php/" . $dir . '/' . $file))
+                    {
+                        $this->find_class_file($dir . "/" . $file);
+                    }
+                }
+            }
+            closedir($handle);
+        }
+
+
+        return $this;
+    }
+
+    public function write($filename) {
+
+        //if (is_writable($filename)) {
+
+        if (!$handle = fopen($filename, 'w')) {
+            echo "Cannot open file ($filename)";
+            exit;
+        }
+
+        $content = '<?php global $_newClasses; $_newClasses=array('.(implode(",\n", array_unique($this->classFiles))).');'."\n";
+
+        // Write $somecontent to our opened file.
+        if (fwrite($handle, $content) === FALSE) {
+            echo "<br />Cannot write to file";
+            exit;
+        }
+        else {
+            echo "Success";
+        }
+
+        fclose($handle);
+
+        //} else {
+        //    echo "The file $filename is not writable";
+        //}
+
+        return $this;
+    }
+
+    public function show() {
+        echo "<pre>".print_r($this->classFiles,true)."</pre>";
+        echo "<br /><br />";
+
+        echo "count=".count($this->classFiles);
+    }
+}
+$TreeClass = new TreeClass();
+$TreeClass->find_class_file('/kimambili')->write($_SERVER['DOCUMENT_ROOT']."/libraries/php/TreeClass.php")->show();
