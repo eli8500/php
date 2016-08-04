@@ -1,14 +1,20 @@
+<?php
+session_start();
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-include_once($_SERVER['DOCUMENT_ROOT']."/TreeClass.php");
+include_once("./jobs/TreeClass.php");
+$CLASSES_PREF = $_SERVER['DOCUMENT_ROOT'].'/exposures/api'.'/vendor/';
 function autoLoad($class) {
     global $_newClasses;
+    global $CLASSES_PREF;
 
     if (isset($_newClasses[$class])) {
-        $file_path = $_SERVER['DOCUMENT_ROOT']."/libraries/" . $_newClasses[$class] . $class . ".php";
+        $file_path = $CLASSES_PREF . $_newClasses[$class] . $class . ".php";
+        echo "<pre>".__METHOD__.":<br/>".print_r($file_path,true)."</pre>";
         include_once($file_path);
     }
 }
-/*if the function is registered fires when class not found before the error.
-loads the class if and only if it was called.*/
+
 spl_autoload_register("autoLoad");
