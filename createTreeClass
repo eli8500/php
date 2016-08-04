@@ -1,13 +1,12 @@
 <?php
-
-/*
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+/**
  * @author Eli Meiler
- * @Date 2012-12-16
- *
- * Create a tree of the classes files
  *
  */
-
+$DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'].'/exposures/api';
+$CLASSES_PREF = $DOCUMENT_ROOT.'/vendor/';
 
 class TreeClass {
 
@@ -15,14 +14,15 @@ class TreeClass {
 
     public function find_class_file($dir = '/')
     {
+        global $CLASSES_PREF;
 
-        if ($handle = opendir($_SERVER['DOCUMENT_ROOT']."/libraries/php/" . $dir))
+        if ($handle = opendir($CLASSES_PREF . $dir))
         {
             while (false !== ($file = readdir($handle)))
             {
                 if ($file != "." && $file != "..")
                 {
-                    if (is_file($_SERVER['DOCUMENT_ROOT']."/libraries/php/" . $dir . '/' . $file) && strpos($file, ".php") )
+                    if (is_file($CLASSES_PREF . $dir . '/' . $file) && strpos($file, ".php") )
                     {
                         $directory = $dir . "/" . $file;
                         $directory = explode("/", $directory);
@@ -42,7 +42,7 @@ class TreeClass {
                         // }
                     }
 
-                    if (is_dir($_SERVER['DOCUMENT_ROOT']."/libraries/php/" . $dir . '/' . $file))
+                    if (is_dir($CLASSES_PREF . $dir . '/' . $file))
                     {
                         $this->find_class_file($dir . "/" . $file);
                     }
@@ -92,4 +92,4 @@ class TreeClass {
     }
 }
 $TreeClass = new TreeClass();
-$TreeClass->find_class_file('/kimambili')->write($_SERVER['DOCUMENT_ROOT']."/libraries/php/TreeClass.php")->show();
+$TreeClass->find_class_file('/')->write("./TreeClass.php")->show();
