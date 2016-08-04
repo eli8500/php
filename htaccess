@@ -1,0 +1,24 @@
+#AuthUserFile /var/www/websites/.htpasswd.minisites
+#AuthName "Access Temporary Denied! Please contact E.H."
+#AuthType Basic
+#Require valid-user
+
+RewriteEngine on
+Options +FollowSymLinks
+# condition and rules for friendly urls. reditects to Controller.php
+
+#RewriteCond %{HTTP_HOST} ^[A-Za-z0-9]*\.yad2\.co\.il$ [nc]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !.gif|.jpg|.png|.pdf|.swf|.shtml|.js|.css$
+RewriteRule ^(.+)$ index.php?mr_str=$1 [QSA,L]
+
+
+php_value allow_call_time_pass_reference true
+php_value register_globals On
+
+
+#compress api data for ios application
+<filesMatch "\.(js|css|php|json)$">
+SetOutputFilter DEFLATE
+</filesMatch>
