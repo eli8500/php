@@ -1,0 +1,14 @@
+
+
+include_once($_SERVER['DOCUMENT_ROOT']."/TreeClass.php");
+function autoLoad($class) {
+    global $_newClasses;
+
+    if (isset($_newClasses[$class])) {
+        $file_path = $_SERVER['DOCUMENT_ROOT']."/libraries/" . $_newClasses[$class] . $class . ".php";
+        include_once($file_path);
+    }
+}
+/*if the function is registered fires when class not found before the error.
+loads the class if and only if it was called.*/
+spl_autoload_register("autoLoad");
